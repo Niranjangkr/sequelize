@@ -3,7 +3,7 @@ const Sequelize = require('sequelize');
 const { DataTypes } = Sequelize;
 const sequelize = new Sequelize('sequelize-learn', 'root', process.env.PASSWORD,{
     dialect: 'mysql',
-    // me: true
+    // freezeTableName: true
 });
 
 // sequelize.drop({ match: /_test$/ }); 
@@ -16,7 +16,10 @@ const User = sequelize.define('user', {
     },
     username: {
         type: DataTypes.STRING,
-        allowNull: false    
+        allowNull: false,
+        validate: {
+            len: [4, 6] //wont work with bulkCreate as bulkCreate ignores this validation unless you mention it in the bulkCreate function
+        }
     },
     password: {
         type: DataTypes.STRING
@@ -45,21 +48,41 @@ User.sync({ alter: true}).then((data) =>{
 
 
     // instead of build and save we can use create to do it simultaneously
-    return User.create({
-        username: "Niraj",
-        password: "Nir2123",
-        age: 19,
-    });
+    return User.bulkCreate([
+        {
+            username: "Tom", //will throw vaidation error   
+            password: "123",
+            age: "21"
+        },
+        {
+            username: "Jerry",
+            password: "123",
+            age: "21"
+        },
+        {
+            username: "DogFromTom&Jerry", //will throw vaidation error
+            password: "123",
+            age: "21"
+        }
+    ], { validate: true });
 }).then((data) => {
-    console.log(data.toJSON(),"User added into Database successfuly");
-    data.username = "Naruto";
-    data.age = 45;
-    // return data.save();
-    // return data.destroy();
-    return data.reload();
-}).then((data) => {
-    // console.log(data.toJSON(), "user updated successfully");
-    console.log(data.toJSON(), "user returned to normal successfully");
+    // console.log(data.toJSON(),"User added into Database successfuly");
+    // data.username = "Naruto";
+    // data.age = 45;
+    // // return data.save();
+    // // return data.destroy();
+    // // return data.reload();
+    // return data.save({ fields: [ 'age' ]});
+
+    // data.decrement({ age: 2})
+    // data.increment({ age: 2})
+    // data.OnePieceIsBest = false
+    // data.save()
+    // data.map(e => {
+    //     console.log(e.toJSON())
+    // })
+
+    data.forEach(ele => console.log(ele.toJSON()))
 }).catch((err) => {
     console.log(err, "error")
 })
