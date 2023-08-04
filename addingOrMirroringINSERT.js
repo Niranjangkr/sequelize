@@ -18,7 +18,7 @@ const User = sequelize.define('user', {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
-            len: [4, 6] //wont work with bulkCreate as bulkCreate ignores this validation unless you mention it in the bulkCreate function
+            len: [3, 20] //wont work with bulkCreate as bulkCreate ignores this validation unless you mention it in the bulkCreate function
         }
     },
     password: {
@@ -34,10 +34,10 @@ const User = sequelize.define('user', {
     }
 }, {
     freezeTableName: true,
-    timestamps: false
+    timestamps: true
 });
 
-User.sync({ alter: true}).then((data) =>{
+User.sync({ force: true}).then((data) =>{
     // working with our table
     // console.log(data, "successful")
     // const user = User.build({username:"Niranjan", password: "Ni123", OnePieceIsBest: true})
@@ -65,6 +65,7 @@ User.sync({ alter: true}).then((data) =>{
             age: "21"
         }
     ], { validate: true });
+    // return User.destroy({where: {}})
 }).then((data) => {
     // console.log(data.toJSON(),"User added into Database successfuly");
     // data.username = "Naruto";
@@ -82,7 +83,8 @@ User.sync({ alter: true}).then((data) =>{
     //     console.log(e.toJSON())
     // })
 
-    data.forEach(ele => console.log(ele.toJSON()))
+    // data.forEach(ele => console.log(ele.toJSON()))
+    console.log(data)
 }).catch((err) => {
     console.log(err, "error")
 })
