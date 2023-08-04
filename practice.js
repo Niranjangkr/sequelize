@@ -93,10 +93,12 @@ async function countStudentInByYear(){
             'school_year', 
             [sequelize.fn('COUNT', sequelize.col('school_year')), 'studentsNo'] //sequelize.col('school_year') for this you can also count names it will be same thing
         ],
-        group: 'school_year'
+        group: 'school_year',
+        raw: true //using this you get plain js object and you dont have to use .toJSON later on
     })
-    
-        data.forEach(ele => console.log(ele.toJSON()))
+    // without raw: true // you get model instances which are like individual or multiple rows based on codition where and you get extra methods with it    
+    console.log(data)
+        // data.forEach(ele => console.log(ele))
     } catch (error) {
         console.error(error)
     }
